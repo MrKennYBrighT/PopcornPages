@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import usePopStore from '../store/popStore';
 
 const FeaturedMovies = () => {
-  const [movies, setMovies] = useState([]);
+  const { movies, setMovies } = usePopStore();
 
-  // Fetch trending movies from TMDb
   useEffect(() => {
     const fetchTrending = async () => {
       const res = await fetch(
         `https://api.themoviedb.org/3/trending/movie/week?api_key=fc70d3012c4f8313d3da7babb9903731`
       );
       const data = await res.json();
-      setMovies(data.results.slice(0, 6)); // Show top 6 movies
+      setMovies(data.results.slice(0, 6));
     };
 
     fetchTrending();
-  }, []);
+  }, [setMovies]);
 
   return (
     <section className="px-8 py-12 bg-[#1C1C3C] text-white">

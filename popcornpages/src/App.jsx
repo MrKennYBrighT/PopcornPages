@@ -1,7 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import Home from './components/Home'; // Make sure this file exists
+import Home from './components/Home'; // Corrected path
+import FeaturedMovies from './components/FeaturedMovies';
+import ReactionBox from './components/ReactionBox';
 
 function App() {
   return (
@@ -14,8 +16,17 @@ function App() {
 
         {/* Define routes for different pages */}
         <Routes>
-          <Route path="/" element={<Home />} />
-          {/* Future routes like /projects, /about, etc. will go here */}
+          <Route
+            path="/"
+            element={
+              <>
+                <Home />
+                <FeaturedMovies />
+                <ReactionBox />
+              </>
+            }
+          />
+          {/* Future routes like /profile, /watchlist, etc. will go here */}
         </Routes>
       </div>
     </Router>
