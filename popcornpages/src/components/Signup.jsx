@@ -1,6 +1,24 @@
-import React from 'react';
+// src/components/Signup.jsx
+import React, { useState } from 'react';
+import { useAuthStore } from '../store/useAuthStore';
+import { toast } from 'react-hot-toast';
 
 const Signup = () => {
+  const { signup } = useAuthStore();
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await signup(email, password);
+      toast.success(`Welcome aboard, ${name || 'friend'}!`);
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0F0F2C]">
       <div className="flex w-full max-w-6xl items-center justify-between">
@@ -16,12 +34,14 @@ const Signup = () => {
         {/* Form Box */}
         <div className="bg-[#2C2C5C] p-8 rounded-lg shadow-lg w-full max-w-md mx-4">
           <h2 className="text-2xl font-bold text-yellow-400 mb-6 text-center">Sign Up</h2>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-yellow-400 mb-2" htmlFor="name">Name</label>
               <input
                 type="text"
                 id="name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 className="w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 placeholder="Enter your name"
               />
@@ -31,8 +51,11 @@ const Signup = () => {
               <input
                 type="email"
                 id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 placeholder="Enter your email"
+                required
               />
             </div>
             <div className="mb-6">
@@ -40,8 +63,11 @@ const Signup = () => {
               <input
                 type="password"
                 id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-2 bg-gray-800 text-white rounded focus:outline-none focus:ring-2 focus:ring-yellow-400"
                 placeholder="Create a password"
+                required
               />
             </div>
             <button

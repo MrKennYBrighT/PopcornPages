@@ -1,10 +1,10 @@
+// src/App.jsx
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Home from './components/Home';
 import ReactionBox from './components/ReactionBox';
 import Dashboard from './components/Dashboard';
-import ProtectedRoute from './components/ProtectedRoute';
 import Watchlist from './views/Watchlist';
 import Trending from './views/Trending';
 import LoginForm from './components/LoginForm';
@@ -13,10 +13,20 @@ import MovieDetail from './views/MovieDetail';
 import PageWrapper from './components/PageWrapper';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import { useAuthStore } from './store/useAuthStore';
 
 function AppContent() {
   const location = useLocation();
   const hideFooterOn = ['/login', '/signup'];
+  const { user, loading } = useAuthStore();
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-[#1C1C3C] text-white">
+        <p className="text-gray-400 text-lg">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-[#1C1C3C] min-h-screen text-white font-inter flex flex-col">
@@ -37,19 +47,27 @@ function AppContent() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
-                <Navbar />
-                <Dashboard />
-              </ProtectedRoute>
+              user ? (
+                <>
+                  <Navbar />
+                  <Dashboard />
+                </>
+              ) : (
+                <Navigate to="/login" />
+              )
             }
           />
           <Route
             path="/watchlist"
             element={
-              <>
-                <Navbar />
-                <Watchlist />
-              </>
+              user ? (
+                <>
+                  <Navbar />
+                  <Watchlist />
+                </>
+              ) : (
+                <Navigate to="/login" />
+              )
             }
           />
           <Route
