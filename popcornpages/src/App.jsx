@@ -1,6 +1,6 @@
 // src/App.jsx
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Home from './components/Home';
 import ReactionBox from './components/ReactionBox';
@@ -14,11 +14,13 @@ import PageWrapper from './components/PageWrapper';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import { useAuthStore } from './store/useAuthStore';
+import Browse from './views/Browse';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function AppContent() {
   const location = useLocation();
   const hideFooterOn = ['/login', '/signup'];
-  const { user, loading } = useAuthStore();
+  const { loading } = useAuthStore();
 
   if (loading) {
     return (
@@ -47,27 +49,32 @@ function AppContent() {
           <Route
             path="/dashboard"
             element={
-              user ? (
+              <ProtectedRoute>
                 <>
                   <Navbar />
                   <Dashboard />
                 </>
-              ) : (
-                <Navigate to="/login" />
-              )
+              </ProtectedRoute>
             }
           />
           <Route
             path="/watchlist"
             element={
-              user ? (
+              <ProtectedRoute>
                 <>
                   <Navbar />
                   <Watchlist />
                 </>
-              ) : (
-                <Navigate to="/login" />
-              )
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/browse"
+            element={
+              <>
+                <Navbar />
+                <Browse />
+              </>
             }
           />
           <Route
@@ -82,19 +89,23 @@ function AppContent() {
           <Route
             path="/login"
             element={
-              <PageWrapper fullWidth center>
-                <Navbar />
-                <LoginForm />
-              </PageWrapper>
+              <>
+                <Navbar /> {/* ✅ Restored Navbar */}
+                <PageWrapper fullWidth center>
+                  <LoginForm />
+                </PageWrapper>
+              </>
             }
           />
           <Route
             path="/signup"
             element={
-              <PageWrapper fullWidth center>
-                <Navbar />
-                <Signup />
-              </PageWrapper>
+              <>
+                <Navbar /> {/* ✅ Restored Navbar */}
+                <PageWrapper fullWidth center>
+                  <Signup />
+                </PageWrapper>
+              </>
             }
           />
           <Route
