@@ -3,9 +3,11 @@ import { useWatchlistStore } from '../store/watchlistStore';
 import MovieCard from '../components/MovieCard';
 import PageWrapper from '../components/PageWrapper';
 import { toast } from 'react-hot-toast';
+import { useAuthStore } from '../store/useAuthStore'; // ✅ Synced auth store
 
 const Watchlist = () => {
-  const { watchlist, removeFromWatchlist, addToWatchlist } = useWatchlistStore();
+  const { watchlist, removeFromWatchlist } = useWatchlistStore(); // ✅ Removed unused addToWatchlist
+  const { user } = useAuthStore(); // ✅ Pull user from correct store
 
   const handleRemove = (movie) => {
     removeFromWatchlist(movie.id);
@@ -25,7 +27,12 @@ const Watchlist = () => {
 
   return (
     <PageWrapper>
-      <h1 className="text-3xl font-bold mb-6 text-yellow-400">🎬 Your Watchlist</h1>
+      <h1 className="text-3xl font-bold mb-2 text-yellow-400">🎬 Your Watchlist</h1>
+      {user && (
+        <p className="text-gray-300 mb-6">
+          Welcome back, <span className="text-yellow-400 font-semibold">{user.displayName || user.email}</span>!
+        </p>
+      )}
 
       {watchlist.length === 0 ? (
         <p className="text-gray-400 italic text-center mt-10">

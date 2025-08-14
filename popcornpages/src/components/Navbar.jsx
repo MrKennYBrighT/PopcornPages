@@ -1,4 +1,3 @@
-// src/components/Navbar.jsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../store/useAuthStore';
@@ -9,7 +8,7 @@ const Navbar = () => {
   return (
     <nav className="bg-[#1C1C3C] text-white px-6 py-4 flex justify-between items-center shadow-md">
       <div className="text-yellow-400 font-bold text-xl">🍿 PopcornPages</div>
-      <div className="space-x-4">
+      <div className="space-x-4 flex items-center">
         <Link to="/">Home</Link>
         <Link to="/watchlist">Watchlist</Link>
         <Link to="/trending">Trending</Link>
@@ -17,6 +16,7 @@ const Navbar = () => {
         {user ? (
           <>
             <Link to="/dashboard">Dashboard</Link>
+            <span className="text-yellow-400 font-medium">Hi, {user.displayName || user.email}</span>
             <button onClick={logout} className="text-red-400 hover:underline">Logout</button>
           </>
         ) : (

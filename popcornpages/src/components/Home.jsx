@@ -1,45 +1,67 @@
 import React from 'react';
 import FeaturedMovies from '../components/FeaturedMovies';
 import PageWrapper from '../components/PageWrapper';
-import { Link } from 'react-router-dom';
-import { useAuthStore } from '../store/useAuthStore'; // ✅ Correct import
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from '../store/useAuthStore';
+import toast from 'react-hot-toast';
+import Hero from '../components/Hero'; // ✅ Import Hero
 
 const Home = () => {
-  const { user } = useAuthStore(); // ✅ Pull user from store
+  const { user } = useAuthStore();
+  const navigate = useNavigate();
+
+  const handleStartPopping = () => {
+    if (user) {
+      const reactionBox = document.getElementById('reaction-box');
+      if (reactionBox) {
+        reactionBox.scrollIntoView({ behavior: 'smooth' });
+      }
+    } else {
+      toast(
+        (t) => (
+          <span className="flex flex-col gap-2">
+            <span className="text-white">Create an account or login to start popping reactions!</span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  navigate('/signup');
+                }}
+                className="px-3 py-1 bg-yellow-400 text-[#1C1C3C] rounded font-semibold"
+              >
+                Sign Up
+              </button>
+              <button
+                onClick={() => {
+                  toast.dismiss(t.id);
+                  navigate('/login');
+                }}
+                className="px-3 py-1 border border-yellow-400 text-yellow-400 rounded font-semibold"
+              >
+                Login
+              </button>
+            </div>
+          </span>
+        ),
+        {
+          duration: 5000,
+          style: {
+            background: '#2C2C5C',
+            color: 'white',
+          },
+        }
+      );
+    }
+  };
 
   return (
     <div className="bg-[#1C1C3C] text-white">
-      <section className="relative w-full h-[80vh] flex items-center justify-center text-center bg-gradient-to-br from-[#1C1C3C] to-[#2C2C5C] text-white px-4">
-        <div className="z-10 max-w-2xl mx-auto">
-          <h1 className="text-[48px] md:text-[64px] font-bold mb-4 text-yellow-400 leading-tight">
-            {user ? `Welcome back, ${user.displayName || user.email}!` : 'Unlimited Movies, One Popcorn'}
-          </h1>
-          <p className="text-lg md:text-xl text-gray-300 mb-6">
-            Search your favorite films, explore new releases, and track what you’ve watched. Popcornpages is your personal movie vault.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-6">
-            <Link
-              to="/browse"
-              className="px-6 py-3 bg-yellow-400 text-[#1C1C3C] font-semibold rounded hover:bg-yellow-300 transition"
-            >
-              Browse Movies
-            </Link>
-            {!user && (
-              <Link
-                to="/signup"
-                className="px-6 py-3 border border-yellow-400 text-yellow-400 font-semibold rounded hover:bg-yellow-400 hover:text-[#1C1C3C] transition"
-              >
-                Start Popping
-              </Link>
-            )}
-          </div>
-        </div>
-
-        <div className="absolute inset-0 bg-[url('/hero-bg.jpg')] bg-cover bg-center opacity-10"></div>
-      </section>
+      {/* ✅ Use Hero component instead of duplicating layout */}
+      <Hero handleStartPopping={handleStartPopping} />
 
       <PageWrapper>
         <FeaturedMovies />
+        <div id="reaction-box" />
       </PageWrapper>
     </div>
   );

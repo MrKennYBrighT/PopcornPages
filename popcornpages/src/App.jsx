@@ -1,5 +1,4 @@
-// src/App.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import Home from './components/Home';
@@ -16,11 +15,20 @@ import Footer from './components/Footer';
 import { useAuthStore } from './store/useAuthStore';
 import Browse from './views/Browse';
 import ProtectedRoute from './components/ProtectedRoute';
+import { useWatchlistStore } from './store/watchlistStore'; // ✅ added
+import SearchResults from './views/SearchResults'; // ✅ added
 
 function AppContent() {
   const location = useLocation();
   const hideFooterOn = ['/login', '/signup'];
-  const { loading } = useAuthStore();
+  const { loading, user } = useAuthStore();
+  const { loadWatchlist } = useWatchlistStore(); // ✅ added
+
+  useEffect(() => {
+    if (user) {
+      loadWatchlist(); // ✅ load watchlist when user is present
+    }
+  }, [user, loadWatchlist]); // ✅ fixed dependency warning
 
   if (loading) {
     return (
@@ -90,7 +98,7 @@ function AppContent() {
             path="/login"
             element={
               <>
-                <Navbar /> {/* ✅ Restored Navbar */}
+                <Navbar />
                 <PageWrapper fullWidth center>
                   <LoginForm />
                 </PageWrapper>
@@ -101,7 +109,7 @@ function AppContent() {
             path="/signup"
             element={
               <>
-                <Navbar /> {/* ✅ Restored Navbar */}
+                <Navbar />
                 <PageWrapper fullWidth center>
                   <Signup />
                 </PageWrapper>
@@ -117,10 +125,18 @@ function AppContent() {
               </>
             }
           />
+          <Route
+            path="/search/:query"
+            element={
+              <>
+                <Navbar />
+                <SearchResults />
+              </>
+            }
+          /> {/* ✅ added */}
         </Routes>
       </div>
 
-      {/* Conditionally render footer */}
       {!hideFooterOn.includes(location.pathname) && <Footer />}
     </div>
   );

@@ -1,4 +1,3 @@
-// src/store/useAuthStore.js
 import { create } from 'zustand';
 import {
   createUserWithEmailAndPassword,
@@ -7,14 +6,30 @@ import {
   updateProfile,
   sendEmailVerification,
   sendPasswordResetEmail,
+  onAuthStateChanged,
 } from 'firebase/auth';
-import { auth } from '../firebase'; // Firebase config in /src
+import { auth } from '../firebase';
 
 export const useAuthStore = create((set) => {
-  const storedUser = JSON.parse(localStorage.getItem('user'));
+  // Listen to Firebase auth state
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      const userData = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName,
+        emailVerified: user.emailVerified,
+      };
+      localStorage.setItem('user', JSON.stringify(userData));
+      set({ user: userData });
+    } else {
+      localStorage.removeItem('user');
+      set({ user: null });
+    }
+  });
 
   return {
-    user: storedUser || null,
+    user: null,
     loading: false,
 
     signup: async (email, password, name) => {
@@ -23,12 +38,10 @@ export const useAuthStore = create((set) => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
-        // Set display name
         if (name) {
           await updateProfile(user, { displayName: name });
         }
 
-        // Send email verification
         await sendEmailVerification(user);
 
         const userData = {

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import MovieCard from '../components/MovieCard';
 import { useWatchlistStore } from '../store/watchlistStore';
+import SearchBar from '../components/SearchBar';
 
 const Browse = () => {
   const [movies, setMovies] = useState([]);
@@ -15,13 +16,16 @@ const Browse = () => {
       const data = await res.json();
       setMovies(data.results);
     };
-
     fetchMovies();
   }, []);
 
   return (
     <div className="px-8 py-12 bg-[#1C1C3C] text-white min-h-screen">
       <h2 className="text-3xl font-bold text-yellow-400 mb-8">Browse Movies</h2>
+      {/* 🔍 SearchBar Component */}
+      <div className="mb-10">
+        <SearchBar />
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
         {movies.map((movie) => {
           const isInWatchlist = watchlist.some((m) => m.id === movie.id);

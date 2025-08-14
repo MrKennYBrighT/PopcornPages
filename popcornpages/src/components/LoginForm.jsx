@@ -1,18 +1,20 @@
-// src/components/LoginForm.jsx
 import React, { useState } from 'react';
 import { useAuthStore } from '../store/useAuthStore';
 import { toast } from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom'; // Added for navigation
 
 const LoginForm = () => {
   const { login } = useAuthStore();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate(); // Initialize navigation
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       await login(email, password);
       toast.success('Logged in successfully!');
+      navigate('/'); // Redirect to homepage
     } catch (err) {
       toast.error(err.message);
     }

@@ -1,11 +1,10 @@
-// src/components/ProtectedRoute.jsx
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import useUserStore from '../store/userStore';
-import PropTypes from 'prop-types'; // ✅ Added PropTypes
+import { useAuthStore } from '../store/useAuthStore'; // ✅ Use correct store
+import PropTypes from 'prop-types';
 
 const ProtectedRoute = ({ children }) => {
-  const user = useUserStore((state) => state.user);
+  const { user } = useAuthStore(); // ✅ Pull user from useAuthStore
   const location = useLocation();
 
   if (!user) {
@@ -16,7 +15,7 @@ const ProtectedRoute = ({ children }) => {
 };
 
 ProtectedRoute.propTypes = {
-  children: PropTypes.node.isRequired, // ✅ Props validation added
+  children: PropTypes.node.isRequired,
 };
 
 export default ProtectedRoute;
