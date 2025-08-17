@@ -1,5 +1,8 @@
+// Import Zustand for state management
 import { create } from 'zustand';
+// Import Firestore instance
 import { db } from '../firebase'; // Make sure this exports Firestore
+// Import Firestore methods for document operations
 import {
   doc,
   getDoc,
@@ -8,12 +11,16 @@ import {
   arrayUnion,
   arrayRemove,
 } from 'firebase/firestore';
+// Import auth store to access current user
 import { useAuthStore } from './useAuthStore';
 
+// Zustand store for managing user's movie watchlist
 export const useWatchlistStore = create((set, get) => ({
+  // Initial state
   watchlist: [],
   loading: false,
 
+  // Load watchlist from Firestore for the current user
   loadWatchlist: async () => {
     const { user } = useAuthStore.getState();
     if (!user) return;
@@ -25,8 +32,10 @@ export const useWatchlistStore = create((set, get) => ({
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
+        // If document exists, set watchlist from Firestore
         set({ watchlist: docSnap.data().movies || [] });
       } else {
+        // If no document, create one with an empty list
         await setDoc(docRef, { movies: [] });
         set({ watchlist: [] });
       }
@@ -37,6 +46,7 @@ export const useWatchlistStore = create((set, get) => ({
     }
   },
 
+  // Add a movie to the user's watchlist in Firestore and local state
   addToWatchlist: async (movie) => {
     const { user } = useAuthStore.getState();
     if (!user) return;
@@ -53,6 +63,7 @@ export const useWatchlistStore = create((set, get) => ({
     }
   },
 
+  // Remove a movie from the user's watchlist in Firestore and local state
   removeFromWatchlist: async (id) => {
     const { user } = useAuthStore.getState();
     if (!user) return;
@@ -73,5 +84,6 @@ export const useWatchlistStore = create((set, get) => ({
     }
   },
 
+  // Clear the watchlist locally (does not affect Firestore)
   clearWatchlist: () => set({ watchlist: [] }),
 }));

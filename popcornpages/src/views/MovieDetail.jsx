@@ -4,16 +4,21 @@ import PageWrapper from '../components/PageWrapper';
 import ReactionBox from '../components/ReactionBox';
 
 const MovieDetail = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // Get movie ID from URL params
+
+  // TMDB API configuration
   const API_KEY = 'fc70d3012c4f8313d3da7babb9903731'; // ✅ Hardcoded API key
   const BASE_URL = 'https://api.themoviedb.org/3';
 
+  // Local state for movie details
   const [movie, setMovie] = useState(null);
   const [trailerKey, setTrailerKey] = useState('');
   const [cast, setCast] = useState([]);
   const [related, setRelated] = useState([]);
 
+  // Fetch all movie-related data when component mounts or ID changes
   useEffect(() => {
+    // 📄 Fetch movie details
     const fetchMovieDetails = async () => {
       try {
         const res = await fetch(`${BASE_URL}/movie/${id}?api_key=${API_KEY}`);
@@ -24,6 +29,7 @@ const MovieDetail = () => {
       }
     };
 
+    // 🎞️ Fetch trailer video
     const fetchTrailer = async () => {
       try {
         const res = await fetch(`${BASE_URL}/movie/${id}/videos?api_key=${API_KEY}`);
@@ -35,32 +41,36 @@ const MovieDetail = () => {
       }
     };
 
+    // 🎭 Fetch cast members
     const fetchCast = async () => {
       try {
         const res = await fetch(`${BASE_URL}/movie/${id}/credits?api_key=${API_KEY}`);
         const data = await res.json();
-        setCast(data.cast.slice(0, 10));
+        setCast(data.cast.slice(0, 10)); // Limit to top 10 cast members
       } catch (err) {
         console.error('Error fetching cast:', err);
       }
     };
 
+    // 🎬 Fetch related movies
     const fetchRelated = async () => {
       try {
         const res = await fetch(`${BASE_URL}/movie/${id}/similar?api_key=${API_KEY}`);
         const data = await res.json();
-        setRelated(data.results.slice(0, 4));
+        setRelated(data.results.slice(0, 4)); // Limit to 4 related movies
       } catch (err) {
         console.error('Error fetching related movies:', err);
       }
     };
 
+    // Trigger all fetches
     fetchMovieDetails();
     fetchTrailer();
     fetchCast();
     fetchRelated();
   }, [id]);
 
+  // 🌀 Loading state
   if (!movie) {
     return (
       <PageWrapper>
@@ -106,6 +116,7 @@ const MovieDetail = () => {
           )}
         </div>
         <div>
+          {/* 🕒 Watchlist Button (non-functional placeholder) */}
           <button className="px-6 py-3 bg-yellow-400 text-[#1C1C3C] font-semibold rounded hover:bg-yellow-300 transition">
             Add to Watchlist
           </button>

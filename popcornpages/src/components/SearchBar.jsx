@@ -1,22 +1,32 @@
+// Importing React and hooks for state and side effects
 import React, { useState, useEffect } from 'react';
+// PropTypes for type checking
 import PropTypes from 'prop-types';
+// Navigation hook from React Router
 import { useNavigate } from 'react-router-dom';
+// Debounce utility to limit API calls
 import debounce from 'lodash.debounce';
 
+// API configuration
 const API_KEY = 'fc70d3012c4f8313d3da7babb9903731';
 const BASE_URL = 'https://api.themoviedb.org/3';
 
+// SearchBar component for movie search functionality
 const SearchBar = ({ onSelectMovie }) => {
+  // Local state for search query, suggestions, and search history
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [history, setHistory] = useState([]);
+
   const navigate = useNavigate();
 
+  // Load search history from localStorage on component mount
   useEffect(() => {
     const stored = localStorage.getItem('searchHistory');
     if (stored) setHistory(JSON.parse(stored));
   }, []);
 
+  // Fetch movie suggestions from TMDB API with debounce
   const fetchSuggestions = debounce(async (searchTerm) => {
     if (!searchTerm.trim()) return setSuggestions([]);
 
@@ -29,19 +39,24 @@ const SearchBar = ({ onSelectMovie }) => {
     }
   }, 400);
 
+  // Handle input change and trigger suggestions
   const handleChange = (e) => {
     const value = e.target.value;
     setQuery(value);
     fetchSuggestions(value);
   };
 
+  // Handle selection of a movie from suggestions
   const handleSelect = (movie) => {
     setQuery('');
     setSuggestions([]);
+
+    // Update search history and store in localStorage
     const updatedHistory = [movie.title, ...history.filter((h) => h !== movie.title)].slice(0, 5);
     setHistory(updatedHistory);
     localStorage.setItem('searchHistory', JSON.stringify(updatedHistory));
 
+    // Trigger callback or navigate to search results
     if (onSelectMovie) {
       onSelectMovie(movie);
     } else {
@@ -50,7 +65,9 @@ const SearchBar = ({ onSelectMovie }) => {
   };
 
   return (
+    // Container for search input and suggestions
     <div className="relative w-full max-w-xl mx-auto">
+      {/* Search input field */}
       <input
         type="text"
         value={query}
@@ -59,6 +76,7 @@ const SearchBar = ({ onSelectMovie }) => {
         className="w-full px-4 py-2 rounded bg-[#2C2C5C] text-white placeholder-yellow-400 focus:outline-none"
       />
 
+      {/* Suggestions dropdown */}
       {suggestions.length > 0 && (
         <div className="absolute z-10 w-full bg-[#1C1C3C] text-white mt-2 rounded shadow-lg">
           {suggestions.map((movie) => (
@@ -74,6 +92,7 @@ const SearchBar = ({ onSelectMovie }) => {
         </div>
       )}
 
+      {/* Display recent search history */}
       {history.length > 0 && (
         <div className="mt-4 text-sm text-gray-400">
           <p className="mb-1">Recent Searches:</p>
@@ -95,8 +114,10 @@ const SearchBar = ({ onSelectMovie }) => {
   );
 };
 
+// Prop type validation for optional callback
 SearchBar.propTypes = {
   onSelectMovie: PropTypes.func,
 };
 
+// Exporting the SearchBar component
 export default SearchBar;

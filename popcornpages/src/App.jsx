@@ -1,6 +1,13 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+
+// Component imports
 import Home from './components/Home';
 import ReactionBox from './components/ReactionBox';
 import Dashboard from './components/Dashboard';
@@ -12,24 +19,32 @@ import MovieDetail from './views/MovieDetail';
 import PageWrapper from './components/PageWrapper';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import { useAuthStore } from './store/useAuthStore';
 import Browse from './views/Browse';
 import ProtectedRoute from './components/ProtectedRoute';
-import { useWatchlistStore } from './store/watchlistStore'; // ✅ added
 import SearchResults from './views/SearchResults'; // ✅ added
+
+// Store imports
+import { useAuthStore } from './store/useAuthStore';
+import { useWatchlistStore } from './store/watchlistStore'; // ✅ added
 
 function AppContent() {
   const location = useLocation();
+
+  // Pages where footer should be hidden
   const hideFooterOn = ['/login', '/signup'];
+
+  // Access auth and watchlist store
   const { loading, user } = useAuthStore();
   const { loadWatchlist } = useWatchlistStore(); // ✅ added
 
+  // Load watchlist when user is authenticated
   useEffect(() => {
     if (user) {
       loadWatchlist(); // ✅ load watchlist when user is present
     }
   }, [user, loadWatchlist]); // ✅ fixed dependency warning
 
+  // Show loading screen while auth state is initializing
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-[#1C1C3C] text-white">
@@ -40,10 +55,13 @@ function AppContent() {
 
   return (
     <div className="bg-[#1C1C3C] min-h-screen text-white font-inter flex flex-col">
+      {/* Toast notifications */}
       <Toaster position="top-right" reverseOrder={false} />
 
+      {/* Main content area */}
       <div className="flex-grow">
         <Routes>
+          {/* 🏠 Home Route */}
           <Route
             path="/"
             element={
@@ -54,6 +72,8 @@ function AppContent() {
               </>
             }
           />
+
+          {/* 🧑‍💼 Dashboard (Protected) */}
           <Route
             path="/dashboard"
             element={
@@ -65,6 +85,8 @@ function AppContent() {
               </ProtectedRoute>
             }
           />
+
+          {/* 📺 Watchlist (Protected) */}
           <Route
             path="/watchlist"
             element={
@@ -76,6 +98,8 @@ function AppContent() {
               </ProtectedRoute>
             }
           />
+
+          {/* 🔍 Browse */}
           <Route
             path="/browse"
             element={
@@ -85,6 +109,8 @@ function AppContent() {
               </>
             }
           />
+
+          {/* 🔥 Trending */}
           <Route
             path="/trending"
             element={
@@ -94,6 +120,8 @@ function AppContent() {
               </>
             }
           />
+
+          {/* 🔐 Login */}
           <Route
             path="/login"
             element={
@@ -105,6 +133,8 @@ function AppContent() {
               </>
             }
           />
+
+          {/* 📝 Signup */}
           <Route
             path="/signup"
             element={
@@ -116,6 +146,8 @@ function AppContent() {
               </>
             }
           />
+
+          {/* 🎬 Movie Detail */}
           <Route
             path="/movie/:id"
             element={
@@ -125,6 +157,8 @@ function AppContent() {
               </>
             }
           />
+
+          {/* 🔎 Search Results */}
           <Route
             path="/search/:query"
             element={
@@ -137,11 +171,13 @@ function AppContent() {
         </Routes>
       </div>
 
+      {/* 📎 Footer (conditionally hidden) */}
       {!hideFooterOn.includes(location.pathname) && <Footer />}
     </div>
   );
 }
 
+// Wrap AppContent with Router
 function App() {
   return (
     <Router>

@@ -1,33 +1,44 @@
+// Importing Zustand for state management
 import { create } from 'zustand';
+// Importing UUID generator for unique reaction IDs
 import { v4 as uuidv4 } from 'uuid';
 
 // This store holds global state for user, movies, reactions, and UI
 const popStore = create((set) => ({
-  user: null, // Logged-in user info
-  isLoggedIn: false, // Auth status
-  activePage: 'home', // Current page/view
-  movies: [], // Movie list
-  reactions: [], // User reactions
+  // Logged-in user info
+  user: null,
 
-  // Set user info
+  // Authentication status
+  isLoggedIn: false,
+
+  // Current active page/view
+  activePage: 'home',
+
+  // List of movies (e.g., trending or search results)
+  movies: [],
+
+  // List of user reactions
+  reactions: [],
+
+  // Set user info and mark as logged in
   setUser: (userData) => set({ user: userData, isLoggedIn: true }),
 
-  // Log out user
+  // Log out user and clear user data
   logout: () => set({ user: null, isLoggedIn: false }),
 
-  // Set active page
+  // Update the active page/view
   setActivePage: (page) => set({ activePage: page }),
 
-  // Set movie list
+  // Update the movie list
   setMovies: (movieList) => set({ movies: movieList }),
 
-  // Add a new reaction with unique ID
+  // Add a new reaction with a unique ID
   addReaction: (reaction) =>
     set((state) => ({
       reactions: [{ ...reaction, id: uuidv4() }, ...state.reactions],
     })),
 
-  // Add emoji to a reaction
+  // Add an emoji to a specific reaction
   updateReactionEmoji: (reactionId, emoji) =>
     set((state) => ({
       reactions: state.reactions.map((r) =>
@@ -41,4 +52,5 @@ const popStore = create((set) => ({
     })),
 }));
 
+// Exporting the popStore for use across the app
 export default popStore;
