@@ -3,14 +3,8 @@ import { create } from 'zustand';
 // Importing UUID generator for unique reaction IDs
 import { v4 as uuidv4 } from 'uuid';
 
-// This store holds global state for user, movies, reactions, and UI
+// This store holds global state for movies, reactions, and UI
 const popStore = create((set) => ({
-  // Logged-in user info
-  user: null,
-
-  // Authentication status
-  isLoggedIn: false,
-
   // Current active page/view
   activePage: 'home',
 
@@ -19,12 +13,6 @@ const popStore = create((set) => ({
 
   // List of user reactions
   reactions: [],
-
-  // Set user info and mark as logged in
-  setUser: (userData) => set({ user: userData, isLoggedIn: true }),
-
-  // Log out user and clear user data
-  logout: () => set({ user: null, isLoggedIn: false }),
 
   // Update the active page/view
   setActivePage: (page) => set({ activePage: page }),

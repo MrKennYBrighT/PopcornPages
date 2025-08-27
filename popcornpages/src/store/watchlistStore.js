@@ -17,7 +17,7 @@ import { useAuthStore } from './useAuthStore';
 // Zustand store for managing user's movie watchlist
 export const useWatchlistStore = create((set, get) => ({
   // Initial state
-  watchlist: [],
+  watchlist: JSON.parse(localStorage.getItem('watchlist')) || [],
   loading: false,
 
   // Load watchlist from Firestore for the current user
@@ -25,7 +25,12 @@ export const useWatchlistStore = create((set, get) => ({
     const { user } = useAuthStore.getState();
     if (!user) return;
 
-    set({ loading: true });
+    // ⏱️ Use cached data immediately
+    const cached = JSON.parse(localStorage.getItem('watchlist')) || [];
+    set({ watchlist: [...cached] });
+
+    // ⏳ Slight delay before showing loading state
+    setTimeout(() => set({ loading: true }), 100); // 100ms delay
 
     try {
       const docRef = doc(db, 'watchlists', user.uid);
@@ -33,11 +38,14 @@ export const useWatchlistStore = create((set, get) => ({
 
       if (docSnap.exists()) {
         // If document exists, set watchlist from Firestore
-        set({ watchlist: docSnap.data().movies || [] });
+        const movies = docSnap.data().movies || [];
+        set({ watchlist: [...movies] }); // Force new array reference
+        localStorage.setItem('watchlist', JSON.stringify(movies));
       } else {
         // If no document, create one with an empty list
         await setDoc(docRef, { movies: [] });
         set({ watchlist: [] });
+        localStorage.setItem('watchlist', JSON.stringify([]));
       }
     } catch (error) {
       console.error('Error loading watchlist:', error);
@@ -51,13 +59,23 @@ export const useWatchlistStore = create((set, get) => ({
     const { user } = useAuthStore.getState();
     if (!user) return;
 
+    const { watchlist } = get();
+    const alreadyExists = watchlist.some((m) => m.id === movie.id);
+    if (alreadyExists) return; // Prevent duplicates
+
     const docRef = doc(db, 'watchlists', user.uid);
 
     try {
       await updateDoc(docRef, {
         movies: arrayUnion(movie),
       });
-      set((state) => ({ watchlist: [...state.watchlist, movie] }));
+
+      // Re-fetch updated watchlist from Firestore
+      const updatedDoc = await getDoc(docRef);
+      const updatedMovies = updatedDoc.exists() ? updatedDoc.data().movies || [] : [];
+
+      set({ watchlist: [...updatedMovies] });
+      localStorage.setItem('watchlist', JSON.stringify(updatedMovies));
     } catch (error) {
       console.error('Error adding to watchlist:', error);
     }
@@ -69,21 +87,31 @@ export const useWatchlistStore = create((set, get) => ({
     if (!user) return;
 
     const docRef = doc(db, 'watchlists', user.uid);
-    const movieToRemove = get().watchlist.find((m) => m.id === id);
-    if (!movieToRemove) return;
 
     try {
+      // Re-fetch the latest watchlist from Firestore
+      const docSnap = await getDoc(docRef);
+      const storedMovies = docSnap.exists() ? docSnap.data().movies || [] : [];
+
+      // Find the exact stored object to remove
+      const exactMatch = storedMovies.find((m) => m.id === id);
+      if (!exactMatch) return;
+
       await updateDoc(docRef, {
-        movies: arrayRemove(movieToRemove),
+        movies: arrayRemove(exactMatch),
       });
-      set((state) => ({
-        watchlist: state.watchlist.filter((movie) => movie.id !== id),
-      }));
+
+      const updatedWatchlist = storedMovies.filter((movie) => movie.id !== id);
+      set({ watchlist: [...updatedWatchlist] }); // Force new array reference
+      localStorage.setItem('watchlist', JSON.stringify(updatedWatchlist));
     } catch (error) {
       console.error('Error removing from watchlist:', error);
     }
   },
 
   // Clear the watchlist locally (does not affect Firestore)
-  clearWatchlist: () => set({ watchlist: [] }),
+  clearWatchlist: () => {
+    set({ watchlist: [] });
+    localStorage.removeItem('watchlist');
+  },
 }));

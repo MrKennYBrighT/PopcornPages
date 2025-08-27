@@ -4,8 +4,10 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 // Toast notifications for user feedback
 import { toast } from 'react-hot-toast';
-// Importing global state store for reactions and user info
+// Importing global state store for reactions
 import popStore from '../store/popStore';
+// Importing authentication store
+import { useAuthStore } from '../store/useAuthStore';
 
 // Component for posting and displaying user reactions
 const ReactionBox = () => {
@@ -16,8 +18,10 @@ const ReactionBox = () => {
   const reactions = popStore((state) => state.reactions);
   const addReaction = popStore((state) => state.addReaction);
   const updateReactionEmoji = popStore((state) => state.updateReactionEmoji);
-  const user = popStore((state) => state.user);
-  const isLoggedIn = popStore((state) => state.isLoggedIn);
+
+  // Accessing user from auth store
+  const user = useAuthStore((state) => state.user);
+  const isLoggedIn = !!user;
 
   const navigate = useNavigate();
 
@@ -70,7 +74,7 @@ const ReactionBox = () => {
 
     // Create new reaction object
     const newReaction = {
-      user: user.name,
+      user: user.displayName || user.email,
       content: text,
       timestamp: new Date().toLocaleString(),
       emojis: [],

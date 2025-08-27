@@ -67,15 +67,34 @@ const MovieCard = ({ movie, onRemove, isInWatchlist, onAdd }) => {
 
     // Trigger appropriate action based on button click
     if (action === 'add') {
-      onAdd();
+      if (isInWatchlist) {
+        toast.error('This movie is already in your watchlist!');
+      } else {
+        onAdd();
+        toast.success('Added to your watchlist!');
+      }
     } else if (action === 'remove') {
       onRemove();
+      toast('Removed from your watchlist.', {
+        icon: '🗑️',
+        style: {
+          background: '#2C2C5C',
+          color: 'white',
+        },
+      });
     }
   };
 
   return (
     // Card container with hover effects and styling
     <div className="relative bg-[#2C2C5C] rounded-lg overflow-hidden shadow-lg hover:scale-105 hover:shadow-[0_0_10px_#FFD966] transition">
+      {/* Saved badge if movie is in watchlist */}
+      {isInWatchlist && (
+        <div className="absolute top-2 right-2 bg-yellow-400 text-[#1C1C3C] px-2 py-1 text-xs font-bold rounded">
+          Saved
+        </div>
+      )}
+
       {/* Link to movie detail page */}
       <Link to={`/movie/${movie.id}`} className="block">
         <img src={posterUrl} alt={movie.title} className="w-full h-80 object-cover" />
