@@ -9,7 +9,7 @@ import { useAuthStore } from '../store/useAuthStore';
 import { toast } from 'react-hot-toast';
 
 // MovieCard component to display individual movie details
-const MovieCard = ({ movie, onRemove, isInWatchlist, onAdd }) => {
+const MovieCard = ({ movie, onRemove, isInWatchlist, onAdd, buttonLabel }) => {
   // Construct poster image URL or fallback placeholder
   const posterUrl = movie.poster_path
     ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
@@ -114,7 +114,7 @@ const MovieCard = ({ movie, onRemove, isInWatchlist, onAdd }) => {
             onClick={(e) => handleWatchlistClick(e, 'remove')}
             className="mt-4 px-4 py-2 rounded font-semibold bg-red-500 text-white hover:bg-red-400 transition"
           >
-            Remove from Watchlist
+            {buttonLabel || 'Remove from Watchlist'}
           </button>
         ) : (
           // Button to add to watchlist
@@ -141,6 +141,7 @@ MovieCard.propTypes = {
   onRemove: PropTypes.func,
   onAdd: PropTypes.func,
   isInWatchlist: PropTypes.bool,
+  buttonLabel: PropTypes.string,
 };
 
 // Exporting the MovieCard component

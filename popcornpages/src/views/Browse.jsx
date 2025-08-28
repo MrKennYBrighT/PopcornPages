@@ -46,6 +46,7 @@ const Browse = () => {
               isInWatchlist={isInWatchlist}
               onAdd={() => addToWatchlist(movie)} // Add to watchlist handler
               onRemove={() => removeFromWatchlist(movie.id)} // Remove from watchlist handler
+              buttonLabel={isInWatchlist ? "Already in Watchlist" : "Add to Watchlist"} // 👈 Updated label
             />
           );
         })}

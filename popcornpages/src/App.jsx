@@ -21,30 +21,25 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Browse from './views/Browse';
 import ProtectedRoute from './components/ProtectedRoute';
-import SearchResults from './views/SearchResults'; // ✅ added
+import SearchResults from './views/SearchResults';
+import ComingSoon from './views/ComingSoon'; // ✅ added
 
 // Store imports
 import { useAuthStore } from './store/useAuthStore';
-import { useWatchlistStore } from './store/watchlistStore'; // ✅ added
+import { useWatchlistStore } from './store/watchlistStore';
 
 function AppContent() {
   const location = useLocation();
-
-  // Pages where footer should be hidden
   const hideFooterOn = ['/login', '/signup'];
-
-  // Access auth and watchlist store
   const { loading, user } = useAuthStore();
-  const { loadWatchlist } = useWatchlistStore(); // ✅ added
+  const { loadWatchlist } = useWatchlistStore();
 
-  // Load watchlist when user is authenticated
   useEffect(() => {
     if (user) {
-      loadWatchlist(); // ✅ load watchlist when user is present
+      loadWatchlist();
     }
-  }, [user, loadWatchlist]); // ✅ fixed dependency warning
+  }, [user, loadWatchlist]);
 
-  // Show loading screen while auth state is initializing
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen bg-[#1C1C3C] text-white">
@@ -55,13 +50,10 @@ function AppContent() {
 
   return (
     <div className="bg-[#1C1C3C] min-h-screen text-white font-inter flex flex-col">
-      {/* Toast notifications */}
       <Toaster position="top-right" reverseOrder={false} />
 
-      {/* Main content area */}
       <div className="flex-grow">
         <Routes>
-          {/* 🏠 Home Route */}
           <Route
             path="/"
             element={
@@ -73,7 +65,6 @@ function AppContent() {
             }
           />
 
-          {/* 🧑‍💼 Dashboard (Protected) */}
           <Route
             path="/dashboard"
             element={
@@ -86,7 +77,6 @@ function AppContent() {
             }
           />
 
-          {/* 📺 Watchlist (Protected) */}
           <Route
             path="/watchlist"
             element={
@@ -99,7 +89,6 @@ function AppContent() {
             }
           />
 
-          {/* 🔍 Browse */}
           <Route
             path="/browse"
             element={
@@ -110,7 +99,6 @@ function AppContent() {
             }
           />
 
-          {/* 🔥 Trending */}
           <Route
             path="/trending"
             element={
@@ -121,7 +109,6 @@ function AppContent() {
             }
           />
 
-          {/* 🔐 Login */}
           <Route
             path="/login"
             element={
@@ -134,7 +121,6 @@ function AppContent() {
             }
           />
 
-          {/* 📝 Signup */}
           <Route
             path="/signup"
             element={
@@ -147,7 +133,6 @@ function AppContent() {
             }
           />
 
-          {/* 🎬 Movie Detail */}
           <Route
             path="/movie/:id"
             element={
@@ -158,7 +143,6 @@ function AppContent() {
             }
           />
 
-          {/* 🔎 Search Results */}
           <Route
             path="/search/:query"
             element={
@@ -167,17 +151,53 @@ function AppContent() {
                 <SearchResults />
               </>
             }
-          /> {/* ✅ added */}
+          />
+
+          {/* 🛠 Coming Soon Routes */}
+          <Route
+            path="/account-settings"
+            element={
+              <>
+                <Navbar />
+                <ComingSoon />
+              </>
+            }
+          />
+          <Route
+            path="/change-password"
+            element={
+              <>
+                <Navbar />
+                <ComingSoon />
+              </>
+            }
+          />
+          <Route
+            path="/update-email"
+            element={
+              <>
+                <Navbar />
+                <ComingSoon />
+              </>
+            }
+          />
+          <Route
+            path="/delete-account"
+            element={
+              <>
+                <Navbar />
+                <ComingSoon />
+              </>
+            }
+          />
         </Routes>
       </div>
 
-      {/* 📎 Footer (conditionally hidden) */}
       {!hideFooterOn.includes(location.pathname) && <Footer />}
     </div>
   );
 }
 
-// Wrap AppContent with Router
 function App() {
   return (
     <Router>

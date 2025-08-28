@@ -17,6 +17,7 @@ const SearchBar = ({ onSelectMovie }) => {
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [history, setHistory] = useState([]);
+  const [removingItem, setRemovingItem] = useState(null); // Track item being removed
 
   const navigate = useNavigate();
 
@@ -64,6 +65,17 @@ const SearchBar = ({ onSelectMovie }) => {
     }
   };
 
+  // Handle removal of a search history item with fade-out
+  const handleRemoveHistoryItem = (item) => {
+    setRemovingItem(item);
+    setTimeout(() => {
+      const updated = history.filter((h) => h !== item);
+      setHistory(updated);
+      localStorage.setItem('searchHistory', JSON.stringify(updated));
+      setRemovingItem(null);
+    }, 300); // Duration matches fade-out animation
+  };
+
   return (
     // Container for search input and suggestions
     <div className="relative w-full max-w-xl mx-auto">
@@ -92,22 +104,30 @@ const SearchBar = ({ onSelectMovie }) => {
         </div>
       )}
 
-      {/* Display recent search history */}
+      {/* Display recent search history directly under the search bar */}
       {history.length > 0 && (
-        <div className="mt-4 text-sm text-gray-400">
-          <p className="mb-1">Recent Searches:</p>
-          <div className="flex flex-wrap gap-2">
-            {history.map((item) => (
-              <button
-                key={`history-${item}`}
-                type="button"
+        <div className="mt-2 flex flex-wrap gap-2">
+          {history.map((item) => (
+            <div
+              key={`history-${item}`}
+              className={`flex items-center bg-[#2C2C5C] text-sm text-gray-300 px-2 py-1 rounded transition-opacity duration-300 ${
+                removingItem === item ? 'opacity-0' : 'opacity-100'
+              }`}
+            >
+              <span
                 onClick={() => setQuery(item)}
-                className="bg-[#2C2C5C] px-2 py-1 rounded cursor-pointer hover:bg-[#FF6B6B]"
+                className="cursor-pointer hover:text-yellow-400"
               >
                 {item}
-              </button>
-            ))}
-          </div>
+              </span>
+              <span
+                onClick={() => handleRemoveHistoryItem(item)}
+                className="ml-2 text-red-400 hover:text-red-600 cursor-pointer"
+              >
+                ×
+              </span>
+            </div>
+          ))}
         </div>
       )}
     </div>

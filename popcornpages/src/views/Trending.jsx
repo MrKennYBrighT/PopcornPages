@@ -44,6 +44,7 @@ const Trending = () => {
                 movie={movie}
                 onAdd={() => addToWatchlist(movie)} // Add to watchlist handler
                 isInWatchlist={isInWatchlist(movie.id)} // Watchlist status
+                buttonLabel={isInWatchlist(movie.id) ? "Already in Watchlist" : "Add to Watchlist"} // 👈 Updated label
               />
             </Link>
 
