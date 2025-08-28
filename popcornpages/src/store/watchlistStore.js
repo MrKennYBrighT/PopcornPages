@@ -9,8 +9,7 @@ import {
   setDoc,
   updateDoc,
   arrayUnion,
-  arrayRemove,
-} from 'firebase/firestore';
+} from 'firebase/firestore'; // Removed arrayRemove
 // Import auth store to access current user
 import { useAuthStore } from './useAuthStore';
 
@@ -93,15 +92,14 @@ export const useWatchlistStore = create((set, get) => ({
       const docSnap = await getDoc(docRef);
       const storedMovies = docSnap.exists() ? docSnap.data().movies || [] : [];
 
-      // Find the exact stored object to remove
-      const exactMatch = storedMovies.find((m) => m.id === id);
-      if (!exactMatch) return;
+      // Filter out the movie by ID
+      const updatedWatchlist = storedMovies.filter((movie) => movie.id !== id);
 
+      // Overwrite the entire array in Firestore
       await updateDoc(docRef, {
-        movies: arrayRemove(exactMatch),
+        movies: updatedWatchlist,
       });
 
-      const updatedWatchlist = storedMovies.filter((movie) => movie.id !== id);
       set({ watchlist: [...updatedWatchlist] }); // Force new array reference
       localStorage.setItem('watchlist', JSON.stringify(updatedWatchlist));
     } catch (error) {
