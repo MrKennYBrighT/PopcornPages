@@ -190,6 +190,15 @@ function AppContent() {
               </>
             }
           />
+          <Route
+            path="/comingsoon"
+            element={
+              <>
+                <Navbar />
+                <ComingSoon />
+              </>
+            }
+          />
         </Routes>
       </div>
 

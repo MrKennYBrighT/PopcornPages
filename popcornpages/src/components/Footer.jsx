@@ -1,5 +1,7 @@
 // Importing social media icons from react-icons library
 import { FaFacebookF, FaInstagram, FaTwitter, FaLinkedinIn, FaTiktok } from 'react-icons/fa';
+// Importing Link for internal navigation
+import { Link } from 'react-router-dom';
 
 // Functional component for the website footer
 export default function Footer() {
@@ -10,8 +12,9 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center">
         
         {/* Branding section with logo/title */}
-        <div className="mb-4 md:mb-0 text-center md:text-left">
-          <h2 className="text-xl font-bold text-yellow-400">🍿 PopcornPages</h2>
+        <div className="mb-4 md:mb-0 text-center md:text-left flex items-center space-x-2">
+          <img src="/favicon.ico" alt="Popcorn Logo" className="w-6 h-6" />
+          <h2 className="text-xl font-bold text-yellow-400">PopcornPages</h2>
         </div>
       
         {/* Copyright notice with dynamic year */}
@@ -22,59 +25,49 @@ export default function Footer() {
         {/* Social media icons with links */}
         <div className="flex space-x-6 text-yellow-400 text-xl">
           {/* Facebook icon with link */}
-          <a
-            href="https://facebook.com"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/comingsoon"
             aria-label="Facebook"
             className="hover:text-white transition"
           >
             <FaFacebookF />
-          </a>
+          </Link>
 
           {/* Instagram icon with link */}
-          <a
-            href="https://instagram.com"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/comingsoon"
             aria-label="Instagram"
             className="hover:text-white transition"
           >
             <FaInstagram />
-          </a>
+          </Link>
 
           {/* Twitter icon with link */}
-          <a
-            href="https://twitter.com"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/comingsoon"
             aria-label="Twitter"
             className="hover:text-white transition"
           >
             <FaTwitter />
-          </a>
+          </Link>
 
           {/* LinkedIn icon with link */}
-          <a
-            href="https://linkedin.com"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/comingsoon"
             aria-label="LinkedIn"
             className="hover:text-white transition"
           >
             <FaLinkedinIn />
-          </a>
+          </Link>
 
           {/* TikTok icon with link */}
-          <a
-            href="https://tiktok.com"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/comingsoon"
             aria-label="TikTok"
             className="hover:text-white transition"
           >
             <FaTiktok />
-          </a>
+          </Link>
         </div>
       </div>
     </footer>

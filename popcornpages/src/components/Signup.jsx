@@ -1,52 +1,34 @@
-// Importing React and useState for managing form inputs
 import React, { useState } from 'react';
-// Custom hook to access signup logic and loading state
 import { useAuthStore } from '../store/useAuthStore';
-// Toast notifications for user feedback
 import { toast } from 'react-hot-toast';
-// Layout wrapper for consistent styling
 import PageWrapper from './PageWrapper';
-// Navigation hook from React Router
-import { useNavigate } from 'react-router-dom'; // ✅ Added for redirect
+import { useNavigate } from 'react-router-dom';
 
-// Signup form component
 const Signup = () => {
-  // Access signup function and loading state from auth store
   const { signup, loading } = useAuthStore();
-
-  // Local state for form inputs
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
-  // Initialize navigation for redirecting after signup
-  const navigate = useNavigate(); // ✅ Initialize navigation
-
-  // Handle form submission
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form behavior
+    e.preventDefault();
     try {
-      // Attempt signup with provided credentials
       await signup(email, password, name);
       toast.success(`Welcome aboard, ${name || 'friend'}!`);
       toast.success('Verification email sent! Please check your inbox.');
-      navigate('/login'); // ✅ Redirect to login page
+      navigate('/login');
     } catch (err) {
-      // Show error message if signup fails
       toast.error(err.message || 'Signup failed');
     }
   };
 
   return (
-    // Use PageWrapper for layout and centering
     <PageWrapper fullWidth center>
-      {/* Full-screen container with dark background */}
-      <div className="min-h-screen flex items-center justify-center bg-[#0F0F2C]">
-        {/* Responsive layout for form and images */}
-        <div className="flex w-full max-w-6xl items-center justify-between">
+      <div className="min-h-screen flex items-center justify-center bg-[#0F0F2C] px-4">
+        <div className="flex flex-col md:flex-row w-full max-w-6xl items-center justify-between gap-8">
           
-          {/* Left Image (visible on medium screens and up) */}
-          <div className="hidden md:block w-1/4">
+          <div className="hidden md:block md:w-1/4">
             <img
               src="/popcorn.jpeg"
               alt="Popcorn left"
@@ -54,16 +36,12 @@ const Signup = () => {
             />
           </div>
 
-          {/* Form Box */}
-          <div className="bg-[#2C2C5C] p-8 rounded-lg shadow-lg w-full max-w-md mx-4">
-            {/* Form heading */}
-            <h2 className="text-2xl font-bold text-yellow-400 mb-6 text-center">Sign Up</h2>
+          <div className="bg-[#2C2C5C] p-6 sm:p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-xl sm:text-2xl font-bold text-yellow-400 mb-6 text-center">Sign Up</h2>
 
-            {/* Signup form */}
             <form onSubmit={handleSubmit}>
-              {/* Name input field */}
               <div className="mb-4">
-                <label className="block text-yellow-400 mb-2" htmlFor="name">Name</label>
+                <label className="block text-yellow-400 mb-2 text-sm sm:text-base" htmlFor="name">Name</label>
                 <input
                   type="text"
                   id="name"
@@ -74,9 +52,8 @@ const Signup = () => {
                 />
               </div>
 
-              {/* Email input field */}
               <div className="mb-4">
-                <label className="block text-yellow-400 mb-2" htmlFor="email">Email</label>
+                <label className="block text-yellow-400 mb-2 text-sm sm:text-base" htmlFor="email">Email</label>
                 <input
                   type="email"
                   id="email"
@@ -88,9 +65,8 @@ const Signup = () => {
                 />
               </div>
 
-              {/* Password input field */}
               <div className="mb-6">
-                <label className="block text-yellow-400 mb-2" htmlFor="password">Password</label>
+                <label className="block text-yellow-400 mb-2 text-sm sm:text-base" htmlFor="password">Password</label>
                 <input
                   type="password"
                   id="password"
@@ -102,7 +78,6 @@ const Signup = () => {
                 />
               </div>
 
-              {/* Submit button with loading state */}
               <button
                 type="submit"
                 disabled={loading}
@@ -117,8 +92,7 @@ const Signup = () => {
             </form>
           </div>
 
-          {/* Right Image (visible on medium screens and up) */}
-          <div className="hidden md:block w-1/4">
+          <div className="hidden md:block md:w-1/4">
             <img
               src="/popcorn.jpeg"
               alt="Popcorn right"
@@ -131,5 +105,4 @@ const Signup = () => {
   );
 };
 
-// Exporting the Signup component
 export default Signup;
