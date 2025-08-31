@@ -1,3 +1,4 @@
+ // fetchMovies.js
 import { doc, updateDoc, arrayUnion } from 'firebase/firestore';
 import { db } from './firebase'; // your Firebase config
 
